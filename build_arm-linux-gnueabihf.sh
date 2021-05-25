@@ -101,7 +101,7 @@ build_python() {
 
 # Installing Python to $INSTALL_DIRECTORY
 install_python() {
-	make install ||
+	make altinstall ||
 		log_error_and_exit "Failed to install Python to $INSTALL_DIRECTORY"
 }
 

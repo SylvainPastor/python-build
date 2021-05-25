@@ -1,4 +1,5 @@
 #!/bin/bash
+ROOT_DIR=$(dirname $(readlink -f $0))
 
 # Python version: Change here if necessary
 PYTHON_VERSION="3.8.5"
@@ -18,10 +19,18 @@ SOURCE_DIRECTORY="Python-$PYTHON_VERSION"
 TARGET_HOST="arm-linux-gnueabihf"
 BUILD_HOST="x86_64-linux-gnu"
 
-WORKING_DIRECTORY="build/$TARGET_HOST"
+WORKING_DIRECTORY="$ROOT_DIR/build/$TARGET_HOST"
 mkdir -p $WORKING_DIRECTORY
 
-INSTALL_DIRECTORY="python-$PYTHON_VERSION/$TARGET_HOST"
+# .
+# ├── python-3.8.5   Package directory
+# │   ├── DEBIAN
+# │   └── usr        Install directory
+# └── README.md
+#
+PACKAGE_NAME="python-$PYTHON_VERSION"
+PACKAGE_DIRECTORY="$ROOT_DIR/$PACKAGE_NAME"
+INSTALL_DIRECTORY="$PACKAGE_DIRECTORY/usr"
 mkdir -p $INSTALL_DIRECTORY
 PREFIX=$(readlink --no-newline --canonicalize "$INSTALL_DIRECTORY")
 
@@ -107,6 +116,19 @@ install_python() {
 
 # ================================================== #
 
+# Make Debian package (.deb)
+make_deb_package() {
+	log_info "Building $PACKAGE_NAME.deb package..."
+
+	mkdir -p "$PACKAGE_DIRECTORY/DEBIAN" &&
+		cp control "$PACKAGE_DIRECTORY/DEBIAN"
+
+	dpkg-deb --build $PACKAGE_DIRECTORY ||
+		log_error_and_exit "Failed to make debian package"
+}
+
+# ================================================== #
+
 main() {
 	cd $WORKING_DIRECTORY
 
@@ -118,6 +140,10 @@ main() {
 	build_python
 
 	install_python
+
+	cd $ROOT_DIR
+
+	make_deb_package
 }
 
 # ================================================== #

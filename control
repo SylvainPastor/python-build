@@ -1,0 +1,8 @@
+Package: python3.8
+Version: 3.8.5
+Architecture: armhf
+Maintainer: rtone.fr
+Section: devel
+Priority: optional
+Multi-Arch: foreign
+Description: Shared Python runtime library (version 3.8).

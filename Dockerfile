@@ -35,6 +35,7 @@ RUN apt-get update
 RUN apt-get install -y \
 	libssl-dev:armhf \
 	zlib1g-dev:armhf \
+	libffi-dev:armhf \
 	libc6-dev-armhf-cross
 
 # Add user "builder"
